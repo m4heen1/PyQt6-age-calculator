@@ -1,0 +1,73 @@
+import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout
+from PyQt6.QtCore import QDate
+
+class AgeCalculator(QWidget):
+    def __init__(self):
+        super().__init__()
+        # The title of the Window
+        self.setWindowTitle("Age Calculator")
+        self.layout = QVBoxLayout()
+        # The label where you enter your birthdate
+        self.birthdate_label = QLabel("Enter Birthdate (YYYY-MM-DD):")
+        self.layout.addWidget(self.birthdate_label)
+
+        self.birthdate_input = QLineEdit()
+        self.layout.addWidget(self.birthdate_input)
+        # The label where you enter Today's date
+        self.today_label = QLabel("Enter Today's Date (YYYY-MM-DD):")
+        self.layout.addWidget(self.today_label)
+
+        self.today_input = QLineEdit()
+        self.layout.addWidget(self.today_input)
+        # Button to make the calculator to calculate the age
+        self.calculate_button = QPushButton("Calculate Age")
+        self.calculate_button.clicked.connect(self.calculate_age)
+        self.layout.addWidget(self.calculate_button)
+        # Label that says calculated age 
+        self.age_label = QLabel("Calculated Age:")
+        self.layout.addWidget(self.age_label)
+
+        self.age_output = QLabel()
+        self.layout.addWidget(self.age_output)
+
+        self.setLayout(self.layout)
+    # The algorithim to solve someone's age
+    def calculate_age(self):
+        try:
+            birthdate_str = self.birthdate_input.text()
+            today_str = self.today_input.text()
+
+            birthdate = QDate.fromString(birthdate_str, "yyyy/MM/dd")
+            today = QDate.fromString(today_str, "yyyy/MM/dd")
+
+            age_years = today.year() - birthdate.year()
+
+            # Check if the birthdate has not occurred yet in the current year
+            if (
+                today.month() < birthdate.month()
+                or (today.month() == birthdate.month() and today.day() < birthdate.day())
+            ):
+                age_years -= 1
+            # Check if the birthdate is on the same day and month as today
+            elif today.month() == birthdate.month() and today.day() == birthdate.day():
+                age_years += 1
+
+            self.age_output.setText(f"Age: {age_years} years")
+        except ValueError:
+            self.age_output.setText("Invalid input")
+
+
+
+
+
+
+
+    
+# To execute it          
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    calculator = AgeCalculator()
+    calculator.show()
+    sys.exit(app.exec())
